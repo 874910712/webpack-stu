@@ -84,13 +84,24 @@ module.exports = {
           filename: "static/media/[hash:10][ext][query]",
         },
       },
+      {
+        test: /\.m?js$/,
+        exclude: /(node_modules|bower_components)/, // 需要排除的文件（这些文件不处理）
+        use: {
+          loader: "babel-loader",
+          // 这里可以进行babel的相关配置
+          // options: {
+          //   presets: ['@babel/preset-env']
+          // }
+        },
+      },
     ],
   },
   //插件
   plugins: [
     new ESLintPlugin({
       // Eslint检测哪些文件
-      content: path.resolve(__dirname, "src"),
+      context: path.resolve(__dirname, "src"),
     }),
   ],
   //模式

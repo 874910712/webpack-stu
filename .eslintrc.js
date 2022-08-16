@@ -22,7 +22,7 @@ module.exports = {
     // ReactCli官方规则
     // "react-app"
     "plugin:prettier/recommended",
-     // VueCli官方规则
+    // VueCli官方规则
     "plugin:vue/essential",
     "plugin:vue/strongly-recommended",
   ],
@@ -35,16 +35,16 @@ module.exports = {
   //it is base on https://github.com/vuejs/eslint-config-vue
   // 具体规则配置
   rules: {
-    "vue/max-attributes-per-line": [
-      2,
-      {
-        singleline: 10,
-        multiline: {
-          max: 1,
-          allowFirstLine: false,
-        },
-      },
-    ],
+    // "vue/max-attributes-per-line": [
+    //   2,
+    //   {
+    //     singleline: 10,
+    //     multiline: {
+    //       max: 1,
+    //       allowFirstLine: false,
+    //     },
+    //   },
+    // ],
     // "vue/name-property-casing": ["error", "PascalCase"],   // 首字母的name的大小写不处理PascalCase
     "vue/name-property-casing": ["off"],
     "accessor-pairs": 2,
