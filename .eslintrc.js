@@ -9,9 +9,10 @@ module.exports = {
       jsx: true, //如果是react项目就需要开启jsx语法
     },
   },
+  // 环境变量
   env: {
-    browser: true,
-    node: true,
+    browser: true, // 启用浏览器中的全局变量
+    node: true, // 启用node全局变量
     es6: true,
   },
   // 继承已有的规则(会被下面的自定义的规则覆盖)

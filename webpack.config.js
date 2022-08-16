@@ -1,4 +1,6 @@
 const path = require("path"); //nodejs 核心模块，专门用于处理路径问题
+// 引入eslint插件
+const ESLintPlugin = require("eslint-webpack-plugin");
 
 module.exports = {
   //入口（相对路径）
@@ -85,7 +87,12 @@ module.exports = {
     ],
   },
   //插件
-  plugins: [],
+  plugins: [
+    new ESLintPlugin({
+      // Eslint检测哪些文件
+      content: path.resolve(__dirname, "src"),
+    }),
+  ],
   //模式
   mode: "development",
 };
