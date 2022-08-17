@@ -112,6 +112,12 @@ module.exports = {
       template: path.resolve(__dirname, "public/test.html")
     }),
   ],
+  // 开发服务器,修改自动重新打包
+  devServer: {
+    host: "localhost",//域名
+    port: "3000",//端口
+    open: true,//是否自动打开浏览器
+  },
   //模式
   mode: "development",
 };
