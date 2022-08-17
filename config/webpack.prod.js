@@ -118,4 +118,6 @@ module.exports = {
   ],
   //模式
   mode: "production",
+  // 编译后代码和源码映射关系
+  devtool: "source-map"
 };

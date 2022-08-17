@@ -125,4 +125,6 @@ module.exports = {
   },
   //模式
   mode: "development",
+  // 编译后代码和源码映射关系
+  devtools: "cheap-module-source-map",
 };
