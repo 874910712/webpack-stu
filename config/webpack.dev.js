@@ -10,8 +10,8 @@ module.exports = {
   //输出
   output: {
     // 项目所有打包文件的输出路径（绝对路径）
-    // __distname nodejs的变量，代表当前文件的文件夹目录
-    path: path.resolve(__dirname, "dist"),
+    // __distname nodejs的变量，代表当前文件的文件夹目录(开发模式下可以为undifend)
+    path: path.resolve(__dirname, "../dist"),
     // 入口文件的输出文件名
     filename: "static/js/main.js",
     // 自动清空上次打包结果
@@ -103,12 +103,12 @@ module.exports = {
   plugins: [
     new ESLintPlugin({
       // Eslint检测哪些文件
-      context: path.resolve(__dirname, "src"),
+      context: path.resolve(__dirname, "../src"),
     }),
     // html插件
     new HtmlWebpackPlugin({
       // 新的html文件特点： 1. 结构与原来的一致 2.自动引入打包输出的资源文件
-      template: path.resolve(__dirname, "public/test.html")
+      template: path.resolve(__dirname, "../public/test.html")
     }),
   ],
   // 开发服务器,修改自动重新打包，不会输出打包后的文件到dist目录，而是直接在内存中
