@@ -39,7 +39,7 @@
     (a.innerHTML = o),
       (o = null),
       (a = a.getElementsByTagName("svg")[0]) &&
-        (a.setAttribute("aria-hidden", "true"),
+      (a.setAttribute("aria-hidden", "true"),
         (a.style.position = "absolute"),
         (a.style.width = 0),
         (a.style.height = 0),
@@ -51,11 +51,11 @@
       ? ~["complete", "loaded", "interactive"].indexOf(document.readyState)
         ? setTimeout(a, 0)
         : ((e = function () {
-            document.removeEventListener("DOMContentLoaded", e, !1), a();
-          }),
+          document.removeEventListener("DOMContentLoaded", e, !1), a();
+        }),
           document.addEventListener("DOMContentLoaded", e, !1))
       : document.attachEvent &&
-        ((l = a),
+      ((l = a),
         (i = t.document),
         (n = !1),
         v(),

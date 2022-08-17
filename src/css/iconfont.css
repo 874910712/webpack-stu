@@ -1,8 +1,9 @@
 @font-face {
-  font-family: "iconfont"; /* Project id 3593028 */
+  font-family: "iconfont";
+  /* Project id 3593028 */
   src: url('../fonts/iconfont.woff2?t=1660656413846') format('woff2'),
-       url('../fonts/iconfont.woff?t=1660656413846') format('woff'),
-       url('../fonts/iconfont.ttf?t=1660656413846') format('truetype');
+    url('../fonts/iconfont.woff?t=1660656413846') format('woff'),
+    url('../fonts/iconfont.ttf?t=1660656413846') format('truetype');
 }
 
 .iconfont {
@@ -36,4 +37,3 @@
 .icon-zhuanjiadayibeifen:before {
   content: "\e607";
 }
-
