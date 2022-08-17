@@ -47,56 +47,62 @@ module.exports = {
     //loader配置
     rules: [
       {
-        // 检测.css文件
-        test: /\.css$/,
-        use: getStyleLoader(),
-      },
-      // less 文件处理
-      {
-        test: /\.less$/,
-        use: getStyleLoader("less-loader"),
-      },
-      {
-        test: /\.s[ac]ss$/,
-        use: getStyleLoader("sass-loader"),
-      },
-      // 静态图片资源预处理
-      {
-        test: /\.(png|jpe?g|gif|webp|svg)$/,
-        // 文件传输，如果小于10kb的会以base64传输
-        type: "asset",
-        parser: {
-          dataUrlCondition: {
-            // 小于10kb的图片转base64以减少页面请求次数
-            maxSize: 10 * 1024,
+        // oneOf标识每一个文件只能被一个loader读取
+        oneOf: [
+          {
+            // 检测.css文件
+            test: /\.css$/,
+            use: getStyleLoader(),
           },
-        },
-        generator: {
-          // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
-          filename: "static/img/[hash:10][ext][query]",
-        },
-      },
-      // 静态文件处理(可以往test加任何文件后缀名)
-      {
-        test: /\.(ttf|woff2|mp3|avi?)$/,
-        // 文件原封不动传输,不进行base64转化
-        type: "asset/resource",
-        generator: {
-          // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
-          filename: "static/media/[hash:10][ext][query]",
-        },
-      },
-      {
-        test: /\.m?js$/,
-        exclude: /(node_modules|bower_components)/, // 需要排除的文件（这些文件不处理）
-        use: {
-          loader: "babel-loader",
-          // 这里可以进行babel的相关配置
-          // options: {
-          //   presets: ['@babel/preset-env']
-          // }
-        },
-      },
+          // less 文件处理
+          {
+            test: /\.less$/,
+            use: getStyleLoader("less-loader"),
+          },
+          {
+            test: /\.s[ac]ss$/,
+            use: getStyleLoader("sass-loader"),
+          },
+          // 静态图片资源预处理
+          {
+            test: /\.(png|jpe?g|gif|webp|svg)$/,
+            // 文件传输，如果小于10kb的会以base64传输
+            type: "asset",
+            parser: {
+              dataUrlCondition: {
+                // 小于10kb的图片转base64以减少页面请求次数
+                maxSize: 10 * 1024,
+              },
+            },
+            generator: {
+              // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
+              filename: "static/img/[hash:10][ext][query]",
+            },
+          },
+          // 静态文件处理(可以往test加任何文件后缀名)
+          {
+            test: /\.(ttf|woff2|mp3|avi?)$/,
+            // 文件原封不动传输,不进行base64转化
+            type: "asset/resource",
+            generator: {
+              // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
+              filename: "static/media/[hash:10][ext][query]",
+            },
+          },
+          {
+            test: /\.m?js$/,
+            //include: path.resolve(__dirname, "../src"),// 只处理src目录下的文件
+            exclude: /(node_modules|bower_components)/, // 需要排除的文件（这些文件不处理）
+            use: {
+              loader: "babel-loader",
+              // 这里可以进行babel的相关配置
+              // options: {
+              //   presets: ['@babel/preset-env']
+              // }
+            },
+          },
+        ]
+      }
     ],
   },
   //插件
@@ -104,6 +110,7 @@ module.exports = {
     new ESLintPlugin({
       // Eslint检测哪些文件
       context: path.resolve(__dirname, "../src"),
+      exclude: "node_modules" // 排除node_modules下的文件
     }),
     // html插件
     new HtmlWebpackPlugin({
