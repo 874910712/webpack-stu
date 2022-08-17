@@ -112,7 +112,9 @@ module.exports = {
     }),
     new MiniCssExtractPlugin({
       filename: "static/css/index.css"
-    })
+    }),
+    // css压缩
+    new CssMinimizerPlugin(),
   ],
   //模式
   mode: "production",
