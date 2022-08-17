@@ -122,6 +122,7 @@ module.exports = {
     host: "localhost",//域名
     port: "3000",//端口
     open: true,//是否自动打开浏览器
+    hot: true, //模块热部署配置(HMR)
   },
   //模式
   mode: "development",

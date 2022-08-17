@@ -8,3 +8,9 @@ import './sass/index.scss'
 // 引入图标文件
 import './css/iconfont.css'
 import './js/iconfont.js'
+
+// ==========================================================
+// if (module.hot) {
+//   // 判断模块是否支持局部热替换
+//   module.hot.accept('xxx.js')
+// }
