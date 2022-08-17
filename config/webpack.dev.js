@@ -98,9 +98,11 @@ module.exports = {
             use: {
               loader: "babel-loader",
               // 这里可以进行babel的相关配置
-              // options: {
-              //   presets: ['@babel/preset-env']
-              // }
+              options: {
+                // presets: ['@babel/preset-env']
+                cacheDirectory: true,// 开启babel缓存
+                cacheCompression: false,// 是否开启缓存压缩
+              }
             },
           },
         ]
@@ -112,7 +114,9 @@ module.exports = {
     new ESLintPlugin({
       // Eslint检测哪些文件
       context: path.resolve(__dirname, "../src"),
-      exclude: "node_modules" // 排除node_modules下的文件
+      exclude: "node_modules", // 排除node_modules下的文件
+      cache: true, // 开启eslint缓存
+      cacheLocation: path.resolve(__dirname, "../node_modules/.cache/eslintcache"),// eslint缓存文件路径
     }),
     // html插件
     new HtmlWebpackPlugin({
