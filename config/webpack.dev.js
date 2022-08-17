@@ -1,3 +1,8 @@
+// nodejs核心模块，直接使用
+const os = require("os");
+// cpu核数
+const threads = os.cpus().length;
+
 const path = require("path"); //nodejs 核心模块，专门用于处理路径问题
 // 引入eslint插件
 const ESLintPlugin = require("eslint-webpack-plugin");
@@ -5,6 +10,9 @@ const ESLintPlugin = require("eslint-webpack-plugin");
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 // css提取插件
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+// terser插件（webpack5内置默认引入）
+const TerserWebpackPlugin = require("terser-webpack-plugin")
 
 // 用于获取处理样式的loader
 function getStyleLoader(pre) {
@@ -95,15 +103,23 @@ module.exports = {
             test: /\.m?js$/,
             //include: path.resolve(__dirname, "../src"),// 只处理src目录下的文件
             exclude: /(node_modules|bower_components)/, // 需要排除的文件（这些文件不处理）
-            use: {
-              loader: "babel-loader",
-              // 这里可以进行babel的相关配置
-              options: {
-                // presets: ['@babel/preset-env']
-                cacheDirectory: true,// 开启babel缓存
-                cacheCompression: false,// 是否开启缓存压缩
-              }
-            },
+            use: [
+              {
+                loader: "thread-loader",// 开启多进程打包编译
+                options: {
+                  works: threads,// 进程数
+                }
+              },
+              {
+                loader: "babel-loader",
+                // 这里可以进行babel的相关配置
+                options: {
+                  // presets: ['@babel/preset-env']
+                  cacheDirectory: true,// 开启babel缓存
+                  cacheCompression: false,// 是否开启缓存压缩
+                }
+              },
+            ]
           },
         ]
       }
@@ -117,6 +133,7 @@ module.exports = {
       exclude: "node_modules", // 排除node_modules下的文件
       cache: true, // 开启eslint缓存
       cacheLocation: path.resolve(__dirname, "../node_modules/.cache/eslintcache"),// eslint缓存文件路径
+      threads,// 开启多进程和设置进程数
     }),
     // html插件
     new HtmlWebpackPlugin({
@@ -127,6 +144,16 @@ module.exports = {
       filename: "static/css/index.css"
     })
   ],
+  optimization: {
+    // 放置压缩相关插件
+    minimizer: [
+      // css压缩
+      new CssMinimizerPlugin(),
+      new TerserWebpackPlugin({
+        parallel: threads, //开启多进程编译打包
+      })
+    ]
+  },
   // 开发服务器,修改自动重新打包，不会输出打包后的文件到dist目录，而是直接在内存中
   devServer: {
     host: "localhost",//域名
@@ -137,5 +164,5 @@ module.exports = {
   //模式
   mode: "development",
   // 编译后代码和源码映射关系
-  devtools: "cheap-module-source-map",
+  devtool: "cheap-module-source-map",
 };
