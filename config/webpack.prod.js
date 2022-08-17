@@ -32,6 +32,17 @@ module.exports = {
           // 执行顺序，从上到下
           MiniCssExtractPlugin.loader, // 将js中的css通过创建style标签加载到htl文件中
           "css-loader", // 将css资源编译成commonjs的模块到js中
+          // css兼容性处理，这个loader必须在cssloader后面才行，loader如果要加配置就写成这种对象形式即可
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [
+                  "postcss-preset-env", // 能解决大多数样式兼容性问题
+                ],
+              },
+            },
+          },
         ],
       },
       // less 文件处理
