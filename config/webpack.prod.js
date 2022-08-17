@@ -7,6 +7,27 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
+// 用于获取处理样式的loader
+function getStyleLoader(pre) {
+  return [
+    // 执行顺序，从上到下
+    MiniCssExtractPlugin.loader, // 将js中的css通过创建style标签加载到htl文件中
+    "css-loader", // 将css资源编译成commonjs的模块到js中
+    // css兼容性处理，这个loader必须在cssloader后面才行，loader如果要加配置就写成这种对象形式即可
+    {
+      loader: "postcss-loader",
+      options: {
+        postcssOptions: {
+          plugins: [
+            "postcss-preset-env", // 能解决大多数样式兼容性问题
+          ],
+        },
+      },
+    },
+    pre,
+  ].filter(Boolean);
+}
+
 module.exports = {
   //入口（相对路径）
   entry: "./src/main.js",
@@ -28,51 +49,16 @@ module.exports = {
       {
         // 检测.css文件
         test: /\.css$/,
-        use: [
-          // 执行顺序，从上到下
-          MiniCssExtractPlugin.loader, // 将js中的css通过创建style标签加载到htl文件中
-          "css-loader", // 将css资源编译成commonjs的模块到js中
-          // css兼容性处理，这个loader必须在cssloader后面才行，loader如果要加配置就写成这种对象形式即可
-          {
-            loader: "postcss-loader",
-            options: {
-              postcssOptions: {
-                plugins: [
-                  "postcss-preset-env", // 能解决大多数样式兼容性问题
-                ],
-              },
-            },
-          },
-        ],
+        use: getStyleLoader(),
       },
       // less 文件处理
       {
         test: /\.less$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader, // creates style nodes from JS strings
-          },
-          {
-            loader: "css-loader", // translates CSS into CommonJS
-          },
-          {
-            loader: "less-loader", // compiles Less to CSS
-          },
-        ],
+        use: getStyleLoader("less-loader"),
       },
       {
         test: /\.s[ac]ss$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader, // 将 JS 字符串生成为 style 节点
-          },
-          {
-            loader: "css-loader", // 将 CSS 转化成 CommonJS 模块
-          },
-          {
-            loader: "sass-loader", // 将 Sass 编译成 CSS
-          },
-        ],
+        use: getStyleLoader("sass-loader"),
       },
       // 静态图片资源预处理
       {
