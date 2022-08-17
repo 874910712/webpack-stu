@@ -3,7 +3,6 @@ const path = require("path"); //nodejs 核心模块，专门用于处理路径�
 const ESLintPlugin = require("eslint-webpack-plugin");
 // html插件
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-const { Template } = require("webpack");
 
 module.exports = {
   //入口（相对路径）
@@ -112,7 +111,7 @@ module.exports = {
       template: path.resolve(__dirname, "public/test.html")
     }),
   ],
-  // 开发服务器,修改自动重新打包
+  // 开发服务器,修改自动重新打包，不会输出打包后的文件到dist目录，而是直接在内存中
   devServer: {
     host: "localhost",//域名
     port: "3000",//端口
