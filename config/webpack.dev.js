@@ -13,6 +13,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 // terser插件（webpack5内置默认引入）
 const TerserWebpackPlugin = require("terser-webpack-plugin")
+// preload插件(浏览器空闲预加载资源插件)
+const PreloadWebpackPlugin = require("@vue/preload-webpack-plugin");
 
 // 用于获取处理样式的loader
 function getStyleLoader(pre) {
@@ -44,7 +46,11 @@ module.exports = {
     // __distname nodejs的变量，代表当前文件的文件夹目录(开发模式下可以为undifend)
     path: path.resolve(__dirname, "../dist"),
     // 入口文件的输出文件名
-    filename: "static/js/main.js",
+    // filename: "static/js/main.js",
+    // contenthash代表根据文件的实际内容来生成hash值，[contenthash:8]使用contenthash，取8位长度
+    filename: "static/js/[name].[contenthash:8].js", // 入口文件打包输出资源命名方式
+    chunkFilename: "static/js/[name].[contenthash:8].chunk.js", // 动态导入输出资源命名方式
+    assetModuleFilename: "static/media/[name].[hash][ext]", // 图片、字体等资源命名方式（注意用hash）
     // 自动清空上次打包结果
     // 在打包前将dist目录清空，再进行打包
     clean: true,
@@ -84,20 +90,20 @@ module.exports = {
                 maxSize: 10 * 1024,
               },
             },
-            generator: {
-              // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
-              filename: "static/img/[hash:10][ext][query]",
-            },
+            // generator: {
+            //   // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
+            //   filename: "static/img/[hash:10][ext][query]",
+            // },
           },
           // 静态文件处理(可以往test加任何文件后缀名)
           {
             test: /\.(ttf|woff2|mp3|avi?)$/,
             // 文件原封不动传输,不进行base64转化
             type: "asset/resource",
-            generator: {
-              // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
-              filename: "static/media/[hash:10][ext][query]",
-            },
+            // generator: {
+            //   // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
+            //   filename: "static/media/[hash:10][ext][query]",
+            // },
           },
           {
             test: /\.m?js$/,
@@ -142,8 +148,18 @@ module.exports = {
       template: path.resolve(__dirname, "../public/test.html")
     }),
     new MiniCssExtractPlugin({
-      filename: "static/css/index.css"
-    })
+      // filename: "static/css/index.css"
+      filename: "static/css/[name].[contenthash:8].css",
+      chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
+    }),
+    // Preload/prefetch 浏览器空闲预加载资源插件
+    new PreloadWebpackPlugin({
+      // preload兼容性更好
+      rel: "preload",
+      as: "script",
+      // prefetch兼容性更差
+      // rel: 'prefetch' 
+    }),
   ],
   optimization: {
     // 放置压缩相关插件
@@ -153,7 +169,13 @@ module.exports = {
       new TerserWebpackPlugin({
         parallel: threads, //开启多进程编译打包
       })
-    ]
+    ],
+    // 生成runtime文件来保存各个文件之间的引用关系，项目通过runtime文件来获取引用的文件真实名称，
+    // 这样局部文件修改重新打包发布后文件名不一致，也不会导致浏览器之前已经加载的js文件缓存全部失效，只有修改了的文件的缓存会失效
+    // (前提是打包后的文件名得使用[name].[contenthash:n].xx这种规则生成且不修改原文件名的情况下)
+    runtimeChunk: {
+      name: (entrypoint) => `runtime~${entrypoint.name}.js`,
+    }
   },
   // 开发服务器,修改自动重新打包，不会输出打包后的文件到dist目录，而是直接在内存中
   devServer: {

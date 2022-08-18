@@ -13,6 +13,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 // terser插件（webpack5内置默认引入）
 const TerserWebpackPlugin = require("terser-webpack-plugin")
+// preload插件(浏览器空闲预加载资源插件)
+const PreloadWebpackPlugin = require("@vue/preload-webpack-plugin");
 
 // 用于获取处理样式的loader
 function getStyleLoader(pre) {
@@ -43,8 +45,11 @@ module.exports = {
     // 项目所有打包文件的输出路径（绝对路径）
     // __distname nodejs的变量，代表当前文件的文件夹目录
     path: path.resolve(__dirname, "../dist"),
-    filename: "static/js/[name].js", // 入口文件打包输出资源命名方式
-    chunkFilename: "static/js/[name].chunk.js", // 动态导入输出资源命名方式
+    // filename: "static/js/[name].js", // 入口文件打包输出资源命名方式
+    // chunkFilename: "static/js/[name].chunk.js", // 动态导入输出资源命名方式
+    // contenthash代表根据文件的实际内容来生成hash值，[contenthash:8]使用contenthash，取8位长度
+    filename: "static/js/[name].[contenthash:10].js", // 入口文件打包输出资源命名方式
+    chunkFilename: "static/js/[name].[contenthash:10].chunk.js", // 动态导入输出资源命名方式
     assetModuleFilename: "static/media/[name].[hash][ext]", // 图片、字体等资源命名方式（注意用hash）
     // 自动清空上次打包结果
     // 在打包前将dist目录清空，再进行打包
@@ -142,14 +147,24 @@ module.exports = {
     new MiniCssExtractPlugin({
       // filename: "static/css/index.css"
       // 定义输出文件名和目录
-      filename: "static/css/[name].css",
-      chunkFilename: "static/css/[name].chunk.css",
+      // filename: "static/css/[name].css",
+      // chunkFilename: "static/css/[name].chunk.css",
+      filename: "static/css/[name].[contenthash:10].css",
+      chunkFilename: "static/css/[name].[contenthash:10].chunk.css",
     }),
     // // css压缩
     // new CssMinimizerPlugin(),
     // new TerserWebpackPlugin({
     //   parallel: threads, //开启多进程编译打包
-    // })
+    // }),
+    // Preload/prefetch 浏览器空闲预加载资源插件
+    new PreloadWebpackPlugin({
+      // preload兼容性更好
+      rel: "preload",
+      as: "script",
+      // prefetch兼容性更差
+      // rel: 'prefetch' 
+    }),
   ],
   optimization: {
     // 放置压缩相关插件
@@ -163,8 +178,32 @@ module.exports = {
     // 代码分割配置
     splitChunks: {
       chunks: "all", // 对所有模块都进行分割
-      // 其他内容用默认配置即可
+      // 以下是默认值
+      // minSize: 20000, // 分割代码最小的大小
+      // minRemainingSize: 0, // 类似于minSize，最后确保提取的文件大小不能为0
+      // minChunks: 1, // 至少被引用的次数，满足条件才会代码分割
+      // maxAsyncRequests: 30, // 按需加载时并行加载的文件的最大数量
+      // maxInitialRequests: 30, // 入口js文件最大并行请求数量
+      // enforceSizeThreshold: 50000, // 超过50kb一定会单独打包（此时会忽略minRemainingSize、maxAsyncRequests、maxInitialRequests）
+      // cacheGroups: { // 组，哪些模块要打包到一个组
+      //   defaultVendors: { // 组名
+      //     test: /[\\/]node_modules[\\/]/, // 需要打包到一起的模块
+      //     priority: -10, // 权重（越大越高）
+      //     reuseExistingChunk: true, // 如果当前 chunk 包含已从主 bundle 中拆分出的模块，则它将被重用，而不是生成新的模块
+      //   },
+      //   default: { // 其他没有写的配置会使用上面的默认值
+      //     minChunks: 2, // 这里的minChunks权重更大
+      //     priority: -20,
+      //     reuseExistingChunk: true,
+      //   },
+      // },
     },
+    // 生成runtime文件来保存各个文件之间的引用关系，项目通过runtime文件来获取引用的文件真实名称，
+    // 这样局部文件修改重新打包发布后文件名不一致，也不会导致浏览器之前已经加载的js文件缓存全部失效，只有修改了的文件的缓存会失效
+    // (前提是打包后的文件名得使用[name].[contenthash:n].xx这种规则生成且不修改原文件名的情况下)
+    runtimeChunk: {
+      name: (entrypoint) => `runtime~${entrypoint.name}.js`,
+    }
   },
   //模式
   mode: "production",
