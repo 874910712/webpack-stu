@@ -43,8 +43,9 @@ module.exports = {
     // 项目所有打包文件的输出路径（绝对路径）
     // __distname nodejs的变量，代表当前文件的文件夹目录
     path: path.resolve(__dirname, "../dist"),
-    // 入口文件的输出文件名
-    filename: "static/js/main.js",
+    filename: "static/js/[name].js", // 入口文件打包输出资源命名方式
+    chunkFilename: "static/js/[name].chunk.js", // 动态导入输出资源命名方式
+    assetModuleFilename: "static/media/[name].[hash][ext]", // 图片、字体等资源命名方式（注意用hash）
     // 自动清空上次打包结果
     // 在打包前将dist目录清空，再进行打包
     clean: true,
@@ -81,20 +82,20 @@ module.exports = {
                 maxSize: 10 * 1024,
               },
             },
-            generator: {
-              // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
-              filename: "static/img/[hash:10][ext][query]",
-            },
+            // generator: {
+            //   // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
+            //   filename: "static/img/[hash:10][ext][query]",
+            // },
           },
           // 静态文件处理(可以往test加任何文件后缀名)
           {
             test: /\.(ttf|woff2|mp3|avi?)$/,
             // 文件原封不动传输,不进行base64转化
             type: "asset/resource",
-            generator: {
-              // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
-              filename: "static/media/[hash:10][ext][query]",
-            },
+            // generator: {
+            //   // 输出图片的名称(hash：文件hashID，ext：文件扩展名，query：url额外参数)
+            //   filename: "static/media/[hash:10][ext][query]",
+            // },
           },
           {
             test: /\.m?js$/,
@@ -139,7 +140,10 @@ module.exports = {
       template: path.resolve(__dirname, "../public/test.html")
     }),
     new MiniCssExtractPlugin({
-      filename: "static/css/index.css"
+      // filename: "static/css/index.css"
+      // 定义输出文件名和目录
+      filename: "static/css/[name].css",
+      chunkFilename: "static/css/[name].chunk.css",
     }),
     // // css压缩
     // new CssMinimizerPlugin(),
