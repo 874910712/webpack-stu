@@ -27,7 +27,7 @@ module.exports = {
     'plugin:vue/strongly-recommended',
     'prettier'
   ],
-  plugins: [],
+  plugins: ['import'], // 解决动态导入import语法报错问题 --> 实际使用eslint-plugin-import的规则解决的
   globals: {
     AMap: false,
     AMapUI: false
